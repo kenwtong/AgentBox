@@ -1,0 +1,16 @@
+# Local environment
+.env
+
+# Workspace projects
+workspace/*
+!workspace/.gitkeep
+
+# Local application data
+data/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

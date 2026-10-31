@@ -1,0 +1,45 @@
+services:
+  agents:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        HOST_UID: ${HOST_UID:-1000}
+        HOST_GID: ${HOST_GID:-1000}
+
+    working_dir: /workspace
+
+    stdin_open: true
+    tty: true
+    init: true
+
+    command: ["sleep", "infinity"]
+
+    volumes:
+      # Shared development workspace
+      - ${WORKSPACE_DIR:-./workspace}:/workspace:rw
+
+      # OpenCode persistent data and sessions
+      - opencode-data:/home/node/.local/share/opencode
+
+      # OpenCode configuration
+      - opencode-config:/home/node/.config/opencode
+
+      # Pi configuration, extensions and sessions
+      - pi-data:/home/node/.pi
+
+      # Git global configuration
+      - git-config:/home/node/.config/git
+
+    environment:
+      HOME: /home/node
+      GIT_CONFIG_GLOBAL: /home/node/.config/git/config
+      TERM: xterm-256color
+
+    restart: unless-stopped
+
+volumes:
+  opencode-data:
+  opencode-config:
+  pi-data:
+  git-config:
