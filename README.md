@@ -8,6 +8,7 @@ Both agents run as a non-root user and retain their sessions, configuration, and
 
 - Docker Engine or Docker Desktop
 - Docker Compose v2
+- Bash (for the optional AgentBox CLI helper)
 
 ## Getting started
 
@@ -107,6 +108,82 @@ Your configured host workspace is available inside the container at:
 ```
 
 Both OpenCode and Pi use this same directory.
+
+## AgentBox CLI
+
+AgentBox includes an optional Bash script that simplifies container management.
+
+The `scripts/agentbox` helper lets you start, rebuild, and manage AgentBox without having to navigate to the repository directory or remember Docker Compose commands.
+
+### Installation
+
+From the root of your cloned AgentBox repository:
+
+Make the script executable:
+
+```bash
+chmod +x scripts/agentbox
+```
+
+Optionally, create a symbolic link in your local executable directory:
+
+```bash
+mkdir -p ~/.local/bin
+
+ln -sf "$(pwd)/scripts/agentbox" ~/.local/bin/agentbox
+```
+
+Ensure `~/.local/bin` is included in your `PATH`.
+
+You can verify the installation with:
+
+```bash
+which agentbox
+```
+
+Once installed, the `agentbox` command can be run from anywhere.
+
+### Commands
+
+| Command | Description |
+|---|---|
+| `agentbox` | Start containers and enter the agents container |
+| `agentbox up` | Same as `agentbox` |
+| `agentbox build` | Rebuild the image, start containers, and enter the agents container |
+| `agentbox shell` | Enter an already-running agents container |
+| `agentbox restart` | Restart services |
+| `agentbox stop` | Stop services |
+| `agentbox down` | Stop and remove containers |
+
+### Examples
+
+Start AgentBox and enter the container:
+
+```bash
+agentbox
+```
+
+Rebuild after changing the Dockerfile or application dependencies:
+
+```bash
+agentbox build
+```
+
+Enter an already-running container:
+
+```bash
+agentbox shell
+```
+
+Stop AgentBox:
+
+```bash
+agentbox stop
+```
+
+The script automatically resolves its repository location, including when invoked through a symbolic link. It does not require the repository to be installed in a specific directory.
+
+The script is a convenience wrapper around Docker Compose. All standard Docker Compose commands remain available.
 
 ## Using OpenCode
 
@@ -231,6 +308,8 @@ Git configuration is stored in a persistent Docker volume.
 
 ## Lifecycle management
 
+You can manage AgentBox directly through Docker Compose or use the AgentBox CLI helper.
+
 Stop the container:
 
 ```bash
@@ -284,6 +363,12 @@ To update either application:
 docker compose up -d --build
 ```
 
+Alternatively, if you have installed the AgentBox CLI:
+
+```bash
+agentbox build
+```
+
 Existing workspace files and Docker volumes are preserved.
 
 ## Security considerations
@@ -305,9 +390,13 @@ agentbox/
 ├── .gitignore
 ├── .env.example
 ├── README.md
+├── scripts/
+│   └── agentbox
 └── workspace/
     └── .gitkeep
 ```
+
+The `scripts/agentbox` file provides the optional command-line helper for managing the Docker environment.
 
 The workspace directory contains your development projects and is mounted into the container.
 
