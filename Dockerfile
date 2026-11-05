@@ -21,7 +21,7 @@ RUN groupmod --non-unique --gid "${HOST_GID}" node \
     && usermod --non-unique --uid "${HOST_UID}" --gid "${HOST_GID}" node
 
 # Install OpenCode (x86-64 baseline)
-RUN npm install --global --ignore-scripts \
+RUN npm install --global \
         @opencode/cli@2.2.5
 
 # Install Pi
