@@ -29,7 +29,7 @@ RUN npm install --global --ignore-scripts \
 
 # Install Pi
 RUN npm install --global --ignore-scripts \
-        @earendil-works/pi-coding-agent@1.4.0
+        @earendil-works/pi-coding-agent@1.5.0
 
 # Prepare application directories
 RUN mkdir -p \
