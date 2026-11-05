@@ -1,0 +1,61 @@
+
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Resolve symlinks to find the actual script location
+SOURCE="${BASH_SOURCE[0]}"
+
+while [[ -L "$SOURCE" ]]; do
+    DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+    SOURCE="$(readlink "$SOURCE")"
+
+    [[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+
+SCRIPT_DIR="$(cd -P "$(dirname "$SOURCE")" && pwd)"
+AGENTBOX_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+SERVICE="agents"
+
+cd "$AGENTBOX_DIR"
+
+case "${1:-up}" in
+    up)
+        echo "Starting AgentBox..."
+        docker compose up -d
+        echo "Entering AgentBox container..."
+        docker compose exec "$SERVICE" bash
+        ;;
+
+    build)
+        echo "Building and starting AgentBox..."
+        docker compose up -d --build
+        echo "Entering AgentBox container..."
+        docker compose exec "$SERVICE" bash
+        ;;
+
+    shell)
+        echo "Entering AgentBox container..."
+        docker compose exec "$SERVICE" bash
+        ;;
+
+    restart)
+        echo "Restarting AgentBox..."
+        docker compose restart
+        ;;
+
+    stop)
+        echo "Stopping AgentBox..."
+        docker compose stop
+        ;;
+
+    down)
+        echo "Taking AgentBox down..."
+        docker compose down
+        ;;
+
+    *)
+        echo "Usage: agentbox [up|build|shell|restart|stop|down]"
+        exit 1
+        ;;
+esac
